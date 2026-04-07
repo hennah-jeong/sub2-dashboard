@@ -170,6 +170,25 @@ main{padding:20px;flex:1;}
   font-size:9px;color:var(--purple-l);background:var(--purple-d);
   border:1px solid rgba(100,87,232,.25);padding:1px 6px;border-radius:3px;
 }
+.tb-summary{font-size:11.5px;font-weight:600;color:var(--text);line-height:1.4;}
+.left-block .tb-summary{color:#1a5fbf;}
+.center-block .tb-summary{color:#4a3fc0;}
+.right-block .tb-summary{color:#0a7a58;}
+.tb-period{
+  font-family:var(--mono);font-size:10px;font-weight:500;
+  margin-bottom:4px;display:inline-block;
+  padding:1px 6px;border-radius:3px;
+}
+.left-block .tb-period{color:var(--blue);background:var(--blue-d);}
+.center-block .tb-period{color:var(--purple-l);background:var(--purple-d);}
+.right-block .tb-period{color:var(--teal);background:var(--teal-d);}
+.tb-arrow-badge{
+  display:inline-flex;align-items:center;gap:3px;
+  margin-top:5px;font-size:9.5px;font-weight:500;
+  color:var(--purple-l);background:var(--purple-d);
+  border:1px solid rgba(100,87,232,.25);
+  padding:2px 7px;border-radius:3px;
+}
 
 /* ── SLIDE PANEL ── */
 .slide-panel{
@@ -770,6 +789,7 @@ function renderGrid(){
         const periodStr = (t.start && t.end) ? fmtRange(t.start, t.end) : (t.start ? t.start.slice(0,7).replace('-','.') : '');
         const periodHtml = periodStr ? `<div class="tb-period">${periodStr}</div>` : '';
         const summaryHtml = t.summary ? `<div class="tb-summary">${esc(t.summary)}</div>` : '';
+        const cellArrHtml = t.arrow ? `<div class="tb-arrow-badge">▶ 아이지에이웍스로 전달</div>` : '';
         const titleHtml = t.title ? `<div style="font-size:11px;color:var(--text2);margin-bottom:3px;">${esc(t.title)}</div>` : '';
         const usageHtml = t.usage ? `<div class="tb-output">${esc(t.usage)}</div>` : '';
         const left = lane * laneW;
@@ -779,7 +799,7 @@ function renderGrid(){
   style="top:${top+4}px;height:${Math.max(height-8,32)}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px);right:unset;"
   onclick="openDetail('${esc(t.id)}')"
   data-id="${esc(t.id)}">
-  ${periodHtml}${summaryHtml}
+  ${periodHtml}${summaryHtml}${cellArrHtml}
 </div>`;
       }).join('');
 
@@ -799,6 +819,7 @@ ${slotDivs}${taskDivs}
       const periodStr = (t.start && t.end) ? fmtRange(t.start, t.end) : (t.start ? t.start.slice(0,7).replace('-','.') : '');
       const periodHtml = periodStr ? `<div class="tb-period">${periodStr}</div>` : '';
       const summaryHtml = t.summary ? `<div class="tb-summary">${esc(t.summary)}</div>` : '';
+      const cellArrHtml = t.arrow ? `<div class="tb-arrow-badge">▶ 아이지에이웍스로 전달</div>` : '';
       const stepsHtml = (t.steps||[]).map((s,i)=>`
 <div class="tb-step">
   <span class="tb-num">${i+1}</span>
@@ -813,7 +834,7 @@ ${slotDivs}${taskDivs}
   style="top:${top+4}px;height:${Math.max(height-8,32)}px;"
   onclick="openDetail('${esc(t.id)}')"
   data-id="${esc(t.id)}">
-  ${periodHtml}${summaryHtml}
+  ${periodHtml}${summaryHtml}${cellArrHtml}
 </div>`;
     }).join('');
 
