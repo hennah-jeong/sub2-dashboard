@@ -16,8 +16,8 @@
   --amber:#b07a10; --amber-d:rgba(176,122,16,0.1);
   --red:#d03050;
   --sans:'Noto Sans KR',sans-serif; --mono:'IBM Plex Mono',monospace;
-  --cell-min-h:80px;
-  --month-label-w:48px;
+  --cell-min-h:72px;
+  --month-label-w:64px;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 body{background:var(--bg);color:var(--text);font-family:var(--sans);font-size:14px;}
@@ -43,6 +43,7 @@ main{padding:20px;flex:1;}
   border:1px solid var(--border);
   border-radius:12px;
   overflow:auto;
+  scrollbar-gutter:stable;
 }
 
 /* ── COLUMN HEADER ROW ── */
@@ -98,9 +99,11 @@ main{padding:20px;flex:1;}
   min-height:var(--cell-min-h);
   display:flex;align-items:flex-start;justify-content:center;
   padding-top:10px;
-  border-bottom:1px solid var(--border);
-  font-family:var(--mono);font-size:11px;font-weight:500;color:var(--text2);
+  border-bottom:1px solid var(--border2);
+  font-family:var(--mono);font-size:12px;font-weight:600;color:var(--text2);
   position:relative;
+  background:var(--surface);
+  box-sizing:border-box;
 }
 .month-cell.current-month{background:var(--purple-d);}
 .month-cell.current-month .month-label{color:var(--purple-l);}
@@ -124,9 +127,11 @@ main{padding:20px;flex:1;}
 /* ── MONTH SLOT (empty row in each sub-col) ── */
 .month-slot{
   min-height:var(--cell-min-h);
-  border-bottom:1px solid var(--border);
   position:relative;
+  box-sizing:border-box;
+  border-bottom:1px solid var(--border2);
 }
+.month-slot:nth-child(odd){background:rgba(0,0,0,0.012);}
 .month-slot:last-child{border-bottom:none;}
 
 /* ── TASK BLOCK ── */
@@ -266,9 +271,10 @@ main{padding:20px;flex:1;}
 .add-fab:hover{opacity:.9;}
 
 /* ── scrollbar ── */
-::-webkit-scrollbar{width:5px;height:5px;}
-::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:var(--surface3,#e5e7eb);border-radius:3px;}
+::-webkit-scrollbar{width:8px;height:8px;}
+::-webkit-scrollbar-track{background:rgba(0,0,0,0.04);border-radius:4px;}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.2);border-radius:4px;}
+::-webkit-scrollbar-thumb:hover{background:rgba(0,0,0,0.35);}
 </style>
 </head>
 <body>
@@ -709,7 +715,7 @@ function renderGrid(){
   const rightTasks = tasks.filter(t=>t.col==='right');
 
   /* ── build body ── */
-  const CELL_H = 48;
+  const CELL_H = 72;
 
   /* compute per-subCol layout — summary only, fixed compact height */
   function layoutTasks(colTasks, months){
@@ -720,7 +726,7 @@ function renderGrid(){
       if(!r) return;
       /* summary = ~2 lines max, fixed 48px per row slot */
       for(let i = r.si; i <= r.ei; i++){
-        rowHeights[i] = Math.max(rowHeights[i], 48);
+        rowHeights[i] = Math.max(rowHeights[i], 72);
       }
     });
     return rowHeights;
@@ -750,13 +756,13 @@ function renderGrid(){
 
   /* ── month label column ── */
   const monthColHtml = months.map((m,i)=>`
-<div class="month-cell" style="height:${allRowHeights[i]}px;min-height:${allRowHeights[i]}px;">
+<div class="month-cell" style="height:${allRowHeights[i]-1}px;min-height:${allRowHeights[i]-1}px;">
   <span class="month-label">${MKO[m]}</span>
 </div>`).join('');
 
   /* ── render a sub-col ── */
   function subColHtml(colTasks, cls, isSingle, isRight){
-    const slotDivs = months.map((m,i)=>`<div class="month-slot" style="height:${allRowHeights[i]}px;"></div>`).join('');
+    const slotDivs = months.map((m,i)=>`<div class="month-slot" style="height:${allRowHeights[i]-1}px;"></div>`).join('');
 
     if(isRight){
       /* ── multi-lane layout for right col to avoid overlap ── */
@@ -796,7 +802,7 @@ function renderGrid(){
         const width = laneW;
         return `
 <div class="task-block ${cls}"
-  style="top:${top+4}px;height:${Math.max(height-8,32)}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px);right:unset;"
+  style="top:${top+4}px;height:${Math.max(height-8,56)}px;left:calc(${left}% + 3px);width:calc(${width}% - 6px);right:unset;"
   onclick="openDetail('${esc(t.id)}')"
   data-id="${esc(t.id)}">
   ${periodHtml}${summaryHtml}${cellArrHtml}
@@ -831,7 +837,7 @@ ${slotDivs}${taskDivs}
       const arrHtml = t.arrow ? `<div class="tb-arrow">▶ 아이지에이웍스로 전달</div>` : '';
       return `
 <div class="task-block ${cls}"
-  style="top:${top+4}px;height:${Math.max(height-8,32)}px;"
+  style="top:${top+4}px;height:${Math.max(height-8,56)}px;"
   onclick="openDetail('${esc(t.id)}')"
   data-id="${esc(t.id)}">
   ${periodHtml}${summaryHtml}${cellArrHtml}
